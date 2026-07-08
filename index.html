@@ -4,27 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ">
+<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ検証">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
-<title>ヨルノハコニワ Spike 1 - 盤面UI検証</title>
+<title>ヨルノハコニワ Spike 2 - エンジン実機検証</title>
 
-<!-- ============================================================
-  キャッシュ対策の要:
-  ・全アセットに ?v=ビルドID を付与
-  ・HTML / CSS / JS それぞれにビルドIDを埋め込み、実行時に照合
-  ・3つのIDが一致しない = 古いキャッシュが混在 → 画面に赤色警告
-  デプロイ時は BUILD ID を必ず更新すること(手順は README 参照)
-============================================================ -->
-<script>window.BUILD_HTML = 's1-003';</script>
-<link rel="stylesheet" href="style.css?v=s1-003">
-<script src="app.js?v=s1-003" defer></script>
+<!-- キャッシュ対策: 全アセットに ?v=ビルドID。HTML/CSS/runner/engineの4箇所のIDを起動時に照合し、
+     不一致なら赤色警告(Spike 1で実証済みの方式を継承)。デプロイ時はREADME記載の7箇所を更新 -->
+<script>window.BUILD_HTML = 's2-001';</script>
+<link rel="stylesheet" href="style.css?v=s2-001">
+<script src="engine.js?v=s2-001" defer></script>
+<script src="runner.js?v=s2-001" defer></script>
 </head>
 <body>
 
 <header class="top">
-  <h1>ヨルノハコニワ <span class="spike-tag">Spike 1</span></h1>
-  <p class="sub">9×9盤面・タッチ操作・キャッシュ対策の検証</p>
+  <h1>ヨルノハコニワ <span class="spike-tag">Spike 2</span></h1>
+  <p class="sub">将棋エンジン核の実機検証(SFEN/USI・反則50件・perft・1手詰)</p>
 </header>
 
 <div id="cache-warning" class="cache-warning hidden">
@@ -33,53 +29,38 @@
 
 <div class="build-bar">
   <span>HTML: <b id="build-html">?</b></span>
-  <span>JS: <b id="build-js">?</b></span>
   <span>CSS: <b id="build-css">?</b></span>
+  <span>JS: <b id="build-js">?</b></span>
+  <span>ENGINE: <b id="build-engine">?</b></span>
   <span id="css-build-probe" aria-hidden="true"></span>
 </div>
 
 <main>
-  <div class="status-row">
-    <div id="turn-indicator" class="turn-indicator">☗ 先手の番</div>
-    <label class="toggle">
-      <input type="checkbox" id="turn-check" checked>
-      手番チェック
-    </label>
-  </div>
+  <button id="run-all" type="button" class="primary">全テスト実行(94件)</button>
+  <div id="summary" class="summary"></div>
 
-  <div class="board-wrap">
-    <div id="file-labels" class="file-labels"></div>
-    <div class="board-row">
-      <div id="board" class="board"></div>
-      <div id="rank-labels" class="rank-labels"></div>
-    </div>
-  </div>
-
-  <div class="btn-row">
-    <button id="btn-reset-state" type="button">選択解除</button>
-    <button id="btn-reset-board" type="button">初期配置に戻す</button>
-    <button id="btn-size" type="button">盤サイズ: A</button>
-  </div>
+  <div id="suites" class="suites"></div>
 
   <section class="debug">
     <div class="debug-head">
-      <h2>デバッグログ</h2>
+      <h2>ログ</h2>
       <div>
         <button id="btn-copy-log" type="button">ログをコピー</button>
         <button id="btn-toggle-log" type="button">たたむ</button>
       </div>
     </div>
-    <div id="log" class="log" aria-live="polite"><div>起動中...(この表示のまま変わらない場合、app.jsが読み込めていません)</div></div>
+    <div id="log" class="log" aria-live="polite"><div>起動中...(この表示のまま変わらない場合、JSが読み込めていません)</div></div>
   </section>
 
   <section class="notes">
-    <h2>このスパイクで検証すること</h2>
+    <h2>実機で確認すること</h2>
     <ol>
-      <li>iPhone/iPad Safariで盤が画面内に収まり、はみ出さない</li>
-      <li>駒をタップ → 光るマスに移動、が指で確実にできる(誤反応なし)</li>
-      <li>ダブルタップしても拡大しない/長押ししてもメニューが出ない</li>
-      <li>上のビルドIDが3つとも同じ(更新後に古いIDが残らない)</li>
-      <li>連打・同時タッチでも状態が固まらない(固まったら「選択解除」で復帰するか)</li>
+      <li>ビルドIDが4つとも同じ値(E-1)</li>
+      <li>「全テスト実行」で 94/94 PASS(E-2)</li>
+      <li>perft 深さ1〜3の値一致と実行時間(E-3)。深さ4も値一致(数秒かかる)</li>
+      <li>findAllMates 最大時間が50ms以下(E-4)</li>
+      <li>「ログをコピー」で結果を貼り付けられる(E-5)</li>
+      <li>実行中に固まらない・Safariが落ちない(E-6)</li>
     </ol>
   </section>
 </main>
