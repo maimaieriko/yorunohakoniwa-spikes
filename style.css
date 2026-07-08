@@ -1,0 +1,177 @@
+/* ============================================================
+   ヨルノハコニワ Spike 1 スタイル
+   目的: 検証用の最小UI。夜の世界のトーンだけ先取りしつつ、
+         機能検証(タッチ・視認性・キャッシュ)を最優先。
+   ============================================================ */
+
+/* CSSビルドID: デプロイ時に必ず更新(index.html / app.js と揃える) */
+#css-build-probe::after { content: 's1-003'; }
+#css-build-probe { position: absolute; visibility: hidden; }
+
+:root {
+  --night: #141329;        /* 夜空 */
+  --night-soft: #1e1d3a;   /* パネル */
+  --ink: #e8e6f4;          /* 文字 */
+  --ink-dim: #a09ec4;
+  --board: #e8c98a;        /* 盤(視認性最優先で明るい柾目色) */
+  --board-line: #7a5c2e;
+  --glow: #7fe3ff;         /* ひかり(移動可能マス) */
+  --select: #ffd166;       /* 選択中 */
+  --warn: #ff5d73;
+  --cell: min(10.2vw, 52px);   /* サイズA(既定) */
+  --pc-scale: 0.58;
+}
+
+/* サイズB: iPad等の大画面向け比較案(盤サイズトグルで切替) */
+body.size-b {
+  --cell: min(10vw, 60px);
+  --pc-scale: 0.62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--night);
+  color: var(--ink);
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  /* iOS: 長押し選択・タップハイライト・リンクプレビューを抑止 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  /* ダブルタップ拡大の抑止(スクロールは許可) */
+  touch-action: manipulation;
+}
+
+body {
+  min-height: 100dvh;
+  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+           max(16px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.top { text-align: center; }
+.top h1 { font-size: 1.15rem; letter-spacing: 0.12em; }
+.spike-tag {
+  font-size: 0.7rem; vertical-align: middle;
+  background: var(--night-soft); border: 1px solid #3a3866;
+  border-radius: 999px; padding: 2px 8px; margin-left: 6px; color: var(--glow);
+}
+.sub { font-size: 0.72rem; color: var(--ink-dim); margin-top: 4px; }
+
+/* ---- ビルドID表示(キャッシュ検証の中核) ---- */
+.build-bar {
+  display: flex; gap: 12px; font-size: 0.72rem; color: var(--ink-dim);
+  background: var(--night-soft); border: 1px solid #3a3866;
+  border-radius: 8px; padding: 5px 12px;
+}
+.build-bar b { color: var(--glow); font-weight: 600; }
+.cache-warning {
+  background: var(--warn); color: #fff; font-size: 0.8rem; font-weight: 700;
+  border-radius: 8px; padding: 8px 12px; text-align: center;
+}
+.hidden { display: none; }
+
+main { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 560px; }
+
+.status-row { display: flex; align-items: center; gap: 14px; }
+.turn-indicator {
+  font-size: 0.85rem; font-weight: 700; padding: 4px 12px;
+  border-radius: 999px; background: var(--night-soft); border: 1px solid #3a3866;
+}
+.turn-indicator.gote { color: #ffb3c1; }
+.toggle { font-size: 0.75rem; color: var(--ink-dim); display: flex; align-items: center; gap: 4px; }
+
+/* ---- 盤 ---- */
+.board-wrap { display: flex; flex-direction: column; align-items: center; }
+.board-row { display: flex; align-items: stretch; }
+
+.file-labels {
+  display: grid; grid-template-columns: repeat(9, var(--cell));
+  font-size: 0.62rem; color: var(--ink-dim); text-align: center; margin-bottom: 2px;
+}
+.rank-labels {
+  display: grid; grid-template-rows: repeat(9, var(--cell));
+  font-size: 0.62rem; color: var(--ink-dim);
+  align-items: center; padding-left: 4px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell));
+  grid-template-rows: repeat(9, var(--cell));
+  background: var(--board);
+  border: 3px solid var(--board-line);
+  border-radius: 4px;
+  box-shadow: 0 0 24px rgba(127, 227, 255, 0.15);
+  /* 盤上ではスクロール・ズーム等のジェスチャを完全に無効化し、
+     タッチをすべて着手操作として受け取る(前作の操作不安定への対策) */
+  touch-action: none;
+}
+
+.cell {
+  border: 1px solid var(--board-line);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  font-size: calc(var(--cell) * var(--pc-scale));
+  font-weight: 700;
+  color: #201505;
+  line-height: 1;
+}
+
+.cell .pc { pointer-events: none; }           /* タッチ判定は必ずセルで受ける */
+.cell .pc.gote { transform: rotate(180deg); color: #4a1020; }
+
+/* 選択中の駒 */
+.cell.selected { background: var(--select); box-shadow: inset 0 0 0 2px #b8860b; }
+
+/* 移動可能マス = 「ひかり」 */
+.cell.movable { background: rgba(127, 227, 255, 0.45); }
+.cell.movable::after {
+  content: ""; position: absolute; width: 26%; height: 26%;
+  border-radius: 50%; background: #22b8dd; opacity: 0.9;
+}
+.cell.movable.capture { background: rgba(255, 93, 115, 0.4); }
+.cell.movable.capture::after { background: var(--warn); }
+
+/* 無効タップの視覚フィードバック */
+.cell.reject { animation: reject 0.25s ease; }
+@keyframes reject {
+  0%, 100% { background: inherit; }
+  50% { background: rgba(255, 93, 115, 0.5); }
+}
+
+/* ---- ボタン ---- */
+.btn-row { display: flex; gap: 10px; }
+button {
+  font-size: 0.8rem; font-family: inherit;
+  background: var(--night-soft); color: var(--ink);
+  border: 1px solid #4a4880; border-radius: 8px;
+  padding: 8px 14px;
+  min-height: 40px;               /* 子どもの指でも押せる最小サイズ */
+  touch-action: manipulation;
+}
+button:active { background: #34325e; }
+
+/* ---- デバッグログ ---- */
+.debug { width: 100%; }
+.debug-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.debug-head h2, .notes h2 { font-size: 0.8rem; color: var(--ink-dim); }
+.debug-head button { min-height: 32px; padding: 4px 10px; font-size: 0.7rem; }
+.log {
+  background: #0d0c1d; border: 1px solid #3a3866; border-radius: 8px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.66rem; line-height: 1.5;
+  height: 130px; overflow-y: auto; padding: 6px 8px;
+  -webkit-user-select: text; user-select: text;  /* ログは選択コピー可 */
+  overscroll-behavior: contain;
+}
+.log.collapsed { display: none; }
+.log .warn { color: var(--warn); }
+.log .ok { color: #7dffb0; }
+
+.notes { width: 100%; font-size: 0.72rem; color: var(--ink-dim); }
+.notes ol { padding-left: 1.4em; display: grid; gap: 3px; }
