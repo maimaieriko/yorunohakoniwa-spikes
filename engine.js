@@ -371,7 +371,7 @@
   }
 
   return {
-    BUILD: 's2-001',
+    BUILD: 's2-002',
     REASON, parseSfen, toSfen, parseMove, moveToUsi,
     generateLegalMoves, validateMove, applyMove, inCheck, isAttacked,
     perft, findAllMates, kingSquare,

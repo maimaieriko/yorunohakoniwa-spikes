@@ -1,7 +1,7 @@
 /* ヨルノハコニワ Spike 2 スタイル(Spike 1の夜テーマを継承した検証UI) */
 
 /* CSSビルドID: デプロイ時に必ず更新(README記載の7箇所と揃える) */
-#css-build-probe::after { content: 's2-001'; }
+#css-build-probe::after { content: 's2-002'; }
 #css-build-probe { position: absolute; visibility: hidden; }
 
 :root {

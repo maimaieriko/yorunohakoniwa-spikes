@@ -11,7 +11,7 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const BUILD_JS = 's2-001'; // デプロイ時に必ず更新(index.html / style.css / engine.js と揃える)
+  const BUILD_JS = 's2-002'; // デプロイ時に必ず更新(index.html / style.css / engine.js と揃える)
   const HIRATE = 'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1';
   const tick = () => new Promise((r) => setTimeout(r, 0));
   const sortedEq = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
@@ -144,23 +144,39 @@ if (typeof document !== 'undefined') (function () {
   window.addEventListener('error', (e) => log(`JSエラー: ${e.message} (${e.filename}:${e.lineno})`, 'warn'));
 
   // --- ビルドID照合(HTML / CSS / runner / engine の4値) ---
-  function checkBuilds() {
-    const htmlB = window.BUILD_HTML || '不明';
-    let cssB = '読込失敗';
+  // 注意: deferスクリプトの実行時点でCSSの読込が終わっていないことがあり(iOS Safariの初回
+  // アクセスで実際に発生)、その瞬間に1回だけ照合すると「読込失敗」と誤検出する。
+  // 対策: CSSが読めるまで最大5秒リトライし、確定してから警告の要否を判断する。
+  function readCssBuild() {
     try {
       const c = getComputedStyle(document.getElementById('css-build-probe'), '::after').content.replace(/["']/g, '');
-      if (c && c !== 'none') cssB = c;
+      if (c && c !== 'none' && c !== 'normal') return c;
     } catch (_) {}
+    return null;
+  }
+  function checkBuilds(quiet) {
+    const htmlB = window.BUILD_HTML || '不明';
+    const css = readCssBuild();
+    const cssB = css || '読込待ち…';
     const engB = (E && E.BUILD) || '読込失敗';
     document.getElementById('build-html').textContent = htmlB;
     document.getElementById('build-css').textContent = cssB;
     document.getElementById('build-js').textContent = R.BUILD_JS;
     document.getElementById('build-engine').textContent = engB;
-    const same = htmlB === cssB && cssB === R.BUILD_JS && R.BUILD_JS === engB;
-    document.getElementById('cache-warning').classList.toggle('hidden', same);
-    log(`ビルド照合 HTML=${htmlB} CSS=${cssB} JS=${R.BUILD_JS} ENGINE=${engB} → ${same ? '一致' : '不一致!'}`, same ? 'ok' : 'warn');
-    return same;
+    const same = css !== null && htmlB === css && css === R.BUILD_JS && R.BUILD_JS === engB;
+    // CSSがまだ読めていない段階では警告を出さない(誤検出防止)。確定後のみ判定
+    document.getElementById('cache-warning').classList.toggle('hidden', same || css === null);
+    if (!quiet) log(`ビルド照合 HTML=${htmlB} CSS=${cssB} JS=${R.BUILD_JS} ENGINE=${engB} → ${same ? '一致' : css === null ? 'CSS読込待ち' : '不一致!'}`, same ? 'ok' : 'warn');
+    return { same, cssPending: css === null };
   }
+  function startupBuildCheck(attempt) {
+    attempt = attempt || 0;
+    const r = checkBuilds(attempt > 0); // 初回とリトライ確定時のみログ
+    if (r.cssPending && attempt < 20) { setTimeout(() => startupBuildCheck(attempt + 1), 250); return; }
+    if (attempt > 0) checkBuilds(false); // 確定結果をログに残す
+    if (r.cssPending) log('CSSビルドIDを5秒以内に読めませんでした。画面にスタイルが適用されている場合は照合側の問題です(ログを報告してください)', 'warn');
+  }
+  window.addEventListener('load', () => checkBuilds(true)); // 全読込完了時にも表示を更新
 
   // --- スイートカード ---
   const SUITES = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'];
@@ -202,7 +218,7 @@ if (typeof document !== 'undefined') (function () {
     btn.disabled = true; btn.textContent = '実行中…';
     document.getElementById('summary').textContent = '';
     try {
-      checkBuilds();
+      checkBuilds(false);
       log('テストデータ読込中…');
       const tests = await loadTests();
       log('全94件を実行します(perft深さ4で数秒かかります)');
@@ -250,7 +266,7 @@ if (typeof document !== 'undefined') (function () {
   });
 
   buildCards();
-  checkBuilds();
+  startupBuildCheck();
   log(`UA: ${navigator.userAgent}`);
   log('準備完了。「全テスト実行」を押してください', 'ok');
 })();
