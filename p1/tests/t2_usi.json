@@ -1,0 +1,62 @@
+{
+ "suite": "T2 USI着手表記",
+ "count": 8,
+ "cases": [
+  {
+   "id": "T2-01",
+   "mode": "roundtrip",
+   "input": "7g7f",
+   "name": "通常移動",
+   "explanation": "移動元7g→移動先7f。"
+  },
+  {
+   "id": "T2-02",
+   "mode": "roundtrip",
+   "input": "8h2b+",
+   "name": "成りの移動",
+   "explanation": "末尾+は成り。"
+  },
+  {
+   "id": "T2-03",
+   "mode": "roundtrip",
+   "input": "P*5e",
+   "name": "歩打ち",
+   "explanation": "駒種*マスの打ち表記。"
+  },
+  {
+   "id": "T2-04",
+   "mode": "roundtrip",
+   "input": "3d3c+",
+   "name": "成り(短距離)",
+   "explanation": "1マス移動+成り。"
+  },
+  {
+   "id": "T2-05",
+   "mode": "roundtrip",
+   "input": "G*4b",
+   "name": "金打ち",
+   "explanation": "金の打ち表記。"
+  },
+  {
+   "id": "T2-06",
+   "mode": "roundtrip",
+   "input": "1a1b",
+   "name": "端の移動",
+   "explanation": "盤端座標(1筋)の解釈。"
+  },
+  {
+   "id": "T2-07",
+   "mode": "reject",
+   "input": "7g7z",
+   "name": "不正な段名",
+   "explanation": "段はa〜iのみ。zは拒否。"
+  },
+  {
+   "id": "T2-08",
+   "mode": "reject",
+   "input": "+P*5e",
+   "name": "成駒の打ち表記",
+   "explanation": "USIに成駒打ちの表記は存在しない(持ち駒は常に不成)。構文レベルで拒否。"
+  }
+ ]
+}

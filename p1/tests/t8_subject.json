@@ -1,0 +1,214 @@
+{
+ "suite": "T8 将棋SubjectModule判定層",
+ "count": 21,
+ "note": "judge層(DOM非依存)の単体テスト+収録6問の機械検証。テストファースト: subject.js実装前に作成。",
+ "judgeCases": [
+  {
+   "id": "T8-01",
+   "name": "match: 正解手",
+   "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "7g7f"
+    ],
+    "wrongMoves": [
+     {
+      "move": "2g2f",
+      "message": "それも とても いい手!"
+     }
+    ]
+   },
+   "answer": "7g7f",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-02",
+   "name": "match: wrongMoves記載の誤答は個別メッセージ",
+   "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "7g7f"
+    ],
+    "wrongMoves": [
+     {
+      "move": "2g2f",
+      "message": "それも とても いい手!"
+     }
+    ]
+   },
+   "answer": "2g2f",
+   "expect": {
+    "correct": false,
+    "messageIncludes": "いい手"
+   }
+  },
+  {
+   "id": "T8-03",
+   "name": "match: 未記載の誤答は汎用扱い(メッセージなし)",
+   "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "7g7f"
+    ],
+    "wrongMoves": []
+   },
+   "answer": "9g9f",
+   "expect": {
+    "correct": false,
+    "noMessage": true
+   }
+  },
+  {
+   "id": "T8-04",
+   "name": "match: 複数正解",
+   "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "7g7f",
+     "2g2f"
+    ],
+    "wrongMoves": []
+   },
+   "answer": "2g2f",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-05",
+   "name": "mate: 正解(T6-01)",
+   "sfen": "4k4/9/4G4/9/9/9/9/9/K8 b G 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "G*5b",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-06",
+   "name": "mate: 別解1(T6-03)",
+   "sfen": "8k/9/7+P1/9/9/9/9/9/K8 b G 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "G*1b",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-07",
+   "name": "mate: 別解2(T6-03)",
+   "sfen": "8k/9/7+P1/9/9/9/9/9/K8 b G 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "G*2b",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-08",
+   "name": "mate: 王手だが詰まない手",
+   "sfen": "4k4/9/4G4/9/9/9/9/9/K8 b G 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "G*4b",
+   "expect": {
+    "correct": false
+   }
+  },
+  {
+   "id": "T8-09",
+   "name": "mate: 成りなら正解(TSUME1-002)",
+   "sfen": "l3k4/9/4P4/9/4L4/9/9/9/4K4 b - 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "5c5b+",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-10",
+   "name": "mate: 不成は不正解(TSUME1-002)",
+   "sfen": "l3k4/9/4P4/9/4L4/9/9/9/4K4 b - 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "5c5b",
+   "expect": {
+    "correct": false
+   }
+  },
+  {
+   "id": "T8-11",
+   "name": "mate: 非合法手はfalse(占有マスへの打ち)",
+   "sfen": "4k4/9/4G4/9/9/9/9/9/K8 b G 1",
+   "payload": {
+    "judge": "mate",
+    "mateN": 1
+   },
+   "answer": "G*5c",
+   "expect": {
+    "correct": false
+   }
+  }
+ ],
+ "answerTextCases": [
+  {
+   "id": "T8-12",
+   "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "usi": "7g7f",
+   "expect": "7六歩"
+  },
+  {
+   "id": "T8-13",
+   "sfen": "2r1k4/9/9/9/9/9/9/9/K8 b N 1",
+   "usi": "N*4c",
+   "expect": "4三桂打"
+  },
+  {
+   "id": "T8-14",
+   "sfen": "l3k4/9/4P4/9/4L4/9/9/9/4K4 b - 1",
+   "usi": "5c5b+",
+   "expect": "5二歩成"
+  },
+  {
+   "id": "T8-15",
+   "sfen": "4k4/9/9/7p1/9/9/9/7R1/4K4 b - 1",
+   "usi": "2h2d",
+   "expect": "2四飛"
+  }
+ ],
+ "problemSetValidation": {
+  "id": "T8-16",
+  "file": "problems_shogi.json",
+  "expectedMates": {
+   "S-TSUME1-001": [
+    "G*5b"
+   ],
+   "S-TSUME1-002": [
+    "5c5b+"
+   ]
+  },
+  "note": "mate問題=期待詰み手と完全一致 / match問題=correctMoves・wrongMoves全手の合法性。6問=6件としてカウント"
+ }
+}

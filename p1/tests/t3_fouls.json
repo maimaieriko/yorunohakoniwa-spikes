@@ -1,0 +1,506 @@
+{
+ "suite": "T3 反則判定",
+ "count": 50,
+ "cases": [
+  {
+   "id": "C1-01",
+   "name": "自歩と同筋への歩打ち",
+   "sfen": "4k4/9/9/9/9/7P1/9/9/4K4 b P 1",
+   "move": "P*2c",
+   "expect": "illegal",
+   "reason": "NIFU",
+   "inCheck": false,
+   "explanation": "2筋にすでに自分の歩(2f)があるため、同じ筋への歩打ちは二歩で反則。"
+  },
+  {
+   "id": "C1-02",
+   "name": "自歩と同筋への歩打ち(7筋)",
+   "sfen": "4k4/9/9/9/9/2P6/9/9/4K4 b P 1",
+   "move": "P*7c",
+   "expect": "illegal",
+   "reason": "NIFU",
+   "inCheck": false,
+   "explanation": "7筋に自分の歩(7f)がある。位置が離れていても同筋なら二歩。"
+  },
+  {
+   "id": "C1-03",
+   "name": "盤端9筋での二歩",
+   "sfen": "4k4/9/9/P8/9/9/9/9/4K4 b P 1",
+   "move": "P*9f",
+   "expect": "illegal",
+   "reason": "NIFU",
+   "inCheck": false,
+   "explanation": "端の筋でも二歩の規則は同じ。9dの自歩があるため9fへは打てない。"
+  },
+  {
+   "id": "C1-04",
+   "name": "と金がいる筋への歩打ちは合法",
+   "sfen": "4k4/9/9/9/9/7+P1/9/9/4K4 b P 1",
+   "move": "P*2c",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "2fの駒はと金(成駒)であり歩ではない。二歩は「不成の歩」が2枚のときだけ成立する。"
+  },
+  {
+   "id": "C1-05",
+   "name": "と金の筋への歩打ち(敵陣側)",
+   "sfen": "4k4/9/1+P7/9/9/9/9/9/4K4 b P 1",
+   "move": "P*8f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "8cのと金は歩に数えない。同筋への歩打ちは合法。"
+  },
+  {
+   "id": "C1-06",
+   "name": "相手の歩しかない筋への歩打ち",
+   "sfen": "4k4/9/9/6p2/9/9/9/9/4K4 b P 1",
+   "move": "P*3f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "二歩は自分の歩どうしの規則。相手の歩(3d)がある筋には打てる。"
+  },
+  {
+   "id": "C1-07",
+   "name": "隣の筋への歩打ち",
+   "sfen": "4k4/9/9/9/9/5P3/9/9/4K4 b P 1",
+   "move": "P*3f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "自歩は4筋、打つのは3筋。筋が違えば二歩ではない。"
+  },
+  {
+   "id": "C1-08",
+   "name": "成った直後の同筋への歩打ち",
+   "sfen": "4k4/9/3+P5/9/9/9/9/9/4K4 b P 1",
+   "move": "P*6f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "直前に歩が成ってと金(6c)になった想定。成った瞬間から歩ではなくなるため同筋打ちは合法。"
+  },
+  {
+   "id": "C2-01",
+   "name": "歩を1段目に打つ",
+   "sfen": "4k4/9/9/9/9/9/9/9/4K4 b P 1",
+   "move": "P*3a",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "1段目の歩は前に進めず永久に動けないため、打てない。"
+  },
+  {
+   "id": "C2-02",
+   "name": "香を1段目に打つ",
+   "sfen": "4k4/9/9/9/9/9/9/9/4K4 b L 1",
+   "move": "L*7a",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "1段目の香は前に進めないため打てない。"
+  },
+  {
+   "id": "C2-03",
+   "name": "桂を1段目に打つ",
+   "sfen": "4k4/9/9/9/9/9/9/9/4K4 b N 1",
+   "move": "N*4a",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "桂は2段先に跳ぶため、1段目からは盤外にしか行けない。"
+  },
+  {
+   "id": "C2-04",
+   "name": "桂を2段目に打つ",
+   "sfen": "4k4/9/9/9/9/9/9/9/4K4 b N 1",
+   "move": "N*4b",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "2段目の桂も跳び先が盤外のため打てない(桂だけは2段目も不可)。"
+  },
+  {
+   "id": "C2-05",
+   "name": "歩が最奥段へ不成で移動",
+   "sfen": "4k4/6P2/9/9/9/9/9/9/4K4 b - 1",
+   "move": "3b3a",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "歩が1段目へ進むときは必ず成らなければならない(不成だと動けない駒になる)。3b3a+なら合法。"
+  },
+  {
+   "id": "C2-06",
+   "name": "香が最奥段へ不成で移動",
+   "sfen": "4k4/9/2L6/9/9/9/9/9/4K4 b - 1",
+   "move": "7c7a",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "香も1段目到達時は成りが強制。7c7a+なら合法。"
+  },
+  {
+   "id": "C2-07",
+   "name": "桂が2段目へ不成で移動",
+   "sfen": "4k4/9/9/6N2/9/9/9/9/4K4 b - 1",
+   "move": "3d2b",
+   "expect": "illegal",
+   "reason": "DEAD_PIECE",
+   "inCheck": false,
+   "explanation": "桂は1・2段目に着地するとき成りが強制。3d2b+なら合法。"
+  },
+  {
+   "id": "C2-08",
+   "name": "桂の3段目打ちは合法",
+   "sfen": "8k/9/9/9/9/9/9/9/4K4 b N 1",
+   "move": "N*4c",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "3段目なら桂の跳び先(1段目)が盤内にあるため打てる。境界の確認。"
+  },
+  {
+   "id": "C3-01",
+   "name": "打ち歩詰め(端玉)",
+   "sfen": "7lk/9/6S2/6+B2/9/9/9/9/4K4 b P 1",
+   "move": "P*1b",
+   "expect": "illegal",
+   "reason": "UCHIFU_ZUME",
+   "inCheck": false,
+   "explanation": "P*1bは王手で、玉の逃げ場(2aは自駒、2bは銀の利き)がなく、歩は馬(3d→2c→1b)に守られ取れない=詰み。歩を「打って」詰ますのは反則。"
+  },
+  {
+   "id": "C3-02",
+   "name": "打ち歩詰め(中央玉)",
+   "sfen": "3pkl3/9/4S4/9/9/9/9/9/4K4 b P 1",
+   "move": "P*5b",
+   "expect": "illegal",
+   "reason": "UCHIFU_ZUME",
+   "inCheck": false,
+   "explanation": "P*5bは王手。4a/6aは自駒でふさがり、4b/6bと5bは銀(5c)の利き。逃げ場も取る駒もなく詰むため打ち歩詰め。"
+  },
+  {
+   "id": "C3-03",
+   "name": "突き歩詰めは合法",
+   "sfen": "3pkl3/9/3+PPG3/9/9/9/9/9/4K4 b - 1",
+   "move": "5c5b",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "盤上の歩を「突いて」詰ますのは合法。禁止されるのは持ち駒の歩を「打って」詰ます場合のみ。"
+  },
+  {
+   "id": "C3-04",
+   "name": "歩打ちの王手だが逃げ道あり",
+   "sfen": "4k4/9/5G3/9/9/9/9/9/4K4 b P 1",
+   "move": "P*5b",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "P*5bは王手だが玉は6aや6bへ逃げられる。詰みでなければ歩打ちの王手は合法。"
+  },
+  {
+   "id": "C3-05",
+   "name": "歩打ち王手を飛車が取れる",
+   "sfen": "3pkl3/7r1/4S4/9/9/9/9/9/4K4 b P 1",
+   "move": "P*5b",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "C3-02と同形だが、後手の飛車(2b)が横から歩を取れるため詰みではない。よって合法。"
+  },
+  {
+   "id": "C3-06",
+   "name": "歩以外の駒で打って詰ますのは合法",
+   "sfen": "7lk/9/9/6+B2/9/9/9/9/4K4 b G 1",
+   "move": "G*1b",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "G*1bは即詰みだが、打ち歩詰めの禁止は歩だけの規則。金打ちの詰みは合法。"
+  },
+  {
+   "id": "C4-01",
+   "name": "王手を無視して端歩を突く",
+   "sfen": "4k4/9/9/9/4r4/9/8P/9/4K4 b - 1",
+   "move": "1g1f",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": true,
+   "explanation": "飛車(5e)に王手されているのに関係ない手を指すのは王手放置で反則。"
+  },
+  {
+   "id": "C4-02",
+   "name": "王手を無視して金を動かす",
+   "sfen": "4k4/9/9/9/4r4/9/9/9/4K1G2 b - 1",
+   "move": "3i3h",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": true,
+   "explanation": "金を動かしても王手は解消されないため反則。"
+  },
+  {
+   "id": "C4-03",
+   "name": "ピンされた銀を動かす",
+   "sfen": "4k4/9/4r4/9/9/4S4/9/9/4K4 b - 1",
+   "move": "5f4e",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": false,
+   "explanation": "銀(5f)は飛車(5c)と自玉(5i)の間にいる(ピン)。動かすと玉が飛車に取られるため反則。"
+  },
+  {
+   "id": "C4-04",
+   "name": "角にピンされた金を動かす",
+   "sfen": "4k4/9/9/9/8b/9/6G2/9/4K4 b - 1",
+   "move": "3g3f",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": false,
+   "explanation": "金(3g)は角(1e)の斜め筋で玉を守っている。外すと王手になるため動かせない。"
+  },
+  {
+   "id": "C4-05",
+   "name": "玉が飛車の利きへ移動",
+   "sfen": "4k4/9/9/9/5r3/9/9/4K4/9 b - 1",
+   "move": "5h4h",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": false,
+   "explanation": "4hは飛車(4e)の縦の利き。玉が自分から取られる場所へ動くのは反則。"
+  },
+  {
+   "id": "C4-06",
+   "name": "玉が銀の利きへ移動",
+   "sfen": "4k4/9/9/9/9/9/6s2/9/4K4 b - 1",
+   "move": "5i4h",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": false,
+   "explanation": "4hは後手の銀(3g)の利き。玉は相手の利きのあるマスへ入れない。"
+  },
+  {
+   "id": "C4-07",
+   "name": "両王手に対して合駒を打つ",
+   "sfen": "8k/9/9/4r4/8b/9/9/9/4K4 b G 1",
+   "move": "G*5f",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": true,
+   "explanation": "飛(5d)と角(1e)の両王手。合駒は片方しか防げないため、両王手は玉を動かすしかない。"
+  },
+  {
+   "id": "C4-08",
+   "name": "王手が解消されない合駒",
+   "sfen": "8k/9/9/4r4/9/9/9/9/4K4 b G 1",
+   "move": "G*4f",
+   "expect": "illegal",
+   "reason": "KING_IN_CHECK",
+   "inCheck": true,
+   "explanation": "4fは飛車の王手筋(5筋)の上にないため、打っても王手が残る。"
+  },
+  {
+   "id": "C4-09",
+   "name": "王手している駒を玉で取る",
+   "sfen": "8k/9/9/9/9/9/9/4g4/4K4 b - 1",
+   "move": "5i5h",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": true,
+   "explanation": "王手中でも、王手駒(5hの金)に守りがなければ玉で取って解消できる。合法。"
+  },
+  {
+   "id": "C4-10",
+   "name": "有効な合駒",
+   "sfen": "8k/9/9/4r4/9/9/9/9/4K4 b G 1",
+   "move": "G*5f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": true,
+   "explanation": "5fは飛車と玉の間。金を打てば王手が解消されるため合法。"
+  },
+  {
+   "id": "C5-01",
+   "name": "敵陣に無関係な位置での歩成り",
+   "sfen": "4k4/9/9/9/9/4P4/9/9/4K4 b - 1",
+   "move": "5f5e+",
+   "expect": "illegal",
+   "reason": "BAD_PROMOTION",
+   "inCheck": false,
+   "explanation": "成れるのは移動の出発点か到達点が敵陣(1〜3段目)のときだけ。5f→5eはどちらも敵陣外。"
+  },
+  {
+   "id": "C5-02",
+   "name": "敵陣外での銀成り",
+   "sfen": "4k4/9/9/9/9/9/9/5S3/4K4 b - 1",
+   "move": "4h4g+",
+   "expect": "illegal",
+   "reason": "BAD_PROMOTION",
+   "inCheck": false,
+   "explanation": "4h→4gは自陣内の移動であり成れない。"
+  },
+  {
+   "id": "C5-03",
+   "name": "成駒の再成り",
+   "sfen": "4k4/9/9/5+S3/9/9/9/9/4K4 b - 1",
+   "move": "4d4c+",
+   "expect": "illegal",
+   "reason": "BAD_PROMOTION",
+   "inCheck": false,
+   "explanation": "成銀(4d)はすでに成っている。二重に成ることはできない(4d4cなら合法)。"
+  },
+  {
+   "id": "C5-04",
+   "name": "金は成れない",
+   "sfen": "4k4/9/9/4G4/9/9/9/9/4K4 b - 1",
+   "move": "5d5c+",
+   "expect": "illegal",
+   "reason": "BAD_PROMOTION",
+   "inCheck": false,
+   "explanation": "金と玉には成りが存在しない。5d5cなら合法。"
+  },
+  {
+   "id": "C5-05",
+   "name": "敵陣へ入る成り",
+   "sfen": "4k4/9/9/5P3/9/9/9/9/4K4 b - 1",
+   "move": "4d4c+",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "到達点4cが敵陣(3段目)なので成れる。"
+  },
+  {
+   "id": "C5-06",
+   "name": "敵陣内での移動成り",
+   "sfen": "4k4/9/6S2/9/9/9/9/9/4K4 b - 1",
+   "move": "3c2b+",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "出発点3cも到達点2bも敵陣。敵陣内の移動でも成れる。"
+  },
+  {
+   "id": "C5-07",
+   "name": "敵陣から出る成り",
+   "sfen": "4k4/7R1/9/9/9/9/9/9/4K4 b - 1",
+   "move": "2b2f+",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "出発点2bが敵陣なら、敵陣の外(2f)へ出る移動でも成れる。"
+  },
+  {
+   "id": "C5-08",
+   "name": "敵陣内でも不成を選べる",
+   "sfen": "4k4/9/6S2/9/9/9/9/9/4K4 b - 1",
+   "move": "3c3b",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "強制成り(歩香桂の行き所がなくなる場合)以外は、成るかどうかは自由。銀の不成は合法。"
+  },
+  {
+   "id": "C6-01",
+   "name": "金が斜め後ろへ動く",
+   "sfen": "4k4/9/9/9/4G4/9/9/9/4K4 b - 1",
+   "move": "5e4f",
+   "expect": "illegal",
+   "reason": "BAD_MOVEMENT",
+   "inCheck": false,
+   "explanation": "金は斜め後ろへは動けない(前3方向・横・真後ろのみ)。"
+  },
+  {
+   "id": "C6-02",
+   "name": "銀が真横へ動く",
+   "sfen": "4k4/9/9/9/4S4/9/9/9/4K4 b - 1",
+   "move": "5e4e",
+   "expect": "illegal",
+   "reason": "BAD_MOVEMENT",
+   "inCheck": false,
+   "explanation": "銀は横と真後ろへは動けない(前3方向と斜め後ろのみ)。"
+  },
+  {
+   "id": "C6-03",
+   "name": "飛車が駒を飛び越える",
+   "sfen": "4k4/9/9/9/9/4P4/9/4R4/4K4 b - 1",
+   "move": "5h5d",
+   "expect": "illegal",
+   "reason": "BAD_MOVEMENT",
+   "inCheck": false,
+   "explanation": "飛車は途中に駒(5fの自歩)があるとその先へ進めない。"
+  },
+  {
+   "id": "C6-04",
+   "name": "角が駒を飛び越える",
+   "sfen": "4k4/9/9/9/4P4/9/9/1B7/4K4 b - 1",
+   "move": "8h2b",
+   "expect": "illegal",
+   "reason": "BAD_MOVEMENT",
+   "inCheck": false,
+   "explanation": "角の斜め筋の途中(5e)に自歩があるため2bへは行けない。"
+  },
+  {
+   "id": "C6-05",
+   "name": "味方の駒があるマスへ移動",
+   "sfen": "4k4/9/9/4P4/4G4/9/9/9/4K4 b - 1",
+   "move": "5e5d",
+   "expect": "illegal",
+   "reason": "BAD_MOVEMENT",
+   "inCheck": false,
+   "explanation": "自分の駒(5dの歩)がいるマスへは移動できない。"
+  },
+  {
+   "id": "C6-06",
+   "name": "桂は駒を飛び越えられる",
+   "sfen": "4k4/9/9/9/9/4PP3/4N4/9/4K4 b - 1",
+   "move": "5g4e",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": false,
+   "explanation": "桂だけは間の駒に関係なく跳べる。手前に歩が2枚あっても4eへ跳べる。"
+  },
+  {
+   "id": "C7-01",
+   "name": "敵駒のあるマスへ打つ",
+   "sfen": "4k4/9/9/9/4p4/9/9/9/4K4 b G 1",
+   "move": "G*5e",
+   "expect": "illegal",
+   "reason": "BAD_DROP",
+   "inCheck": false,
+   "explanation": "打てるのは空きマスだけ。敵の歩(5e)がいるマスには打てない(取りたければ盤上の駒で取る)。"
+  },
+  {
+   "id": "C7-02",
+   "name": "持っていない駒を打つ",
+   "sfen": "4k4/9/9/9/9/9/9/9/4K4 b P 1",
+   "move": "G*5e",
+   "expect": "illegal",
+   "reason": "BAD_DROP",
+   "inCheck": false,
+   "explanation": "持ち駒は歩のみ。持っていない金は打てない。"
+  },
+  {
+   "id": "C7-03",
+   "name": "自駒のあるマスへ打つ",
+   "sfen": "4k4/9/9/9/9/4P4/9/9/4K4 b G 1",
+   "move": "G*5f",
+   "expect": "illegal",
+   "reason": "BAD_DROP",
+   "inCheck": false,
+   "explanation": "自分の駒がいるマスにも打てない。"
+  },
+  {
+   "id": "C7-04",
+   "name": "王手中の合駒打ちは合法",
+   "sfen": "8k/9/4l4/9/9/9/9/9/4K4 b S 1",
+   "move": "S*5f",
+   "expect": "legal",
+   "reason": null,
+   "inCheck": true,
+   "explanation": "香(5c)の王手筋(5筋)の間に銀を打てば王手が解消される。王手中でも解消する打ちは合法。"
+  }
+ ]
+}
