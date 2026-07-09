@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ検証">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ヨルノハコニワ Spike 3 - V6 セーブ永続化検証</title>
+<script>window.BUILD_HTML = 's3-002';</script>
+<link rel="stylesheet" href="style.css?v=s3-002">
+<script src="save.js?v=s3-002" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <h1>ヨルノハコニワ <span class="spike-tag">Spike 3 / V6</span></h1>
+  <p class="sub">セーブ永続化の実機検証(容量・永続性・書き出し3方式・読み込み)</p>
+</header>
+
+<div id="cache-warning" class="cache-warning hidden">⚠️ ビルドID不一致。再読み込みしてください。</div>
+<div class="build-bar">
+  <span>HTML: <b id="build-html">?</b></span>
+  <span>CSS: <b id="build-css">?</b></span>
+  <span>JS: <b id="build-js">?</b></span>
+  <span id="css-build-probe" aria-hidden="true"></span>
+</div>
+
+<main>
+  <section class="panel">
+    <h2>① この保存領域の識別ID(F-7 PWA分離確認用)</h2>
+    <div class="big-id" id="identity">読込中…</div>
+    <div class="kv" id="identity-meta"></div>
+    <p class="hint">SafariタブとホームS画面追加アプリの両方でこのページを開き、IDが同じか比べてください。
+    <b>IDが違えば保存領域が別</b>=進捗が引き継がれないことの証明になります。</p>
+  </section>
+
+  <section class="panel">
+    <h2>② 容量テスト(F-4)</h2>
+    <button id="btn-capacity" type="button">10KB〜5MB の書込・読出テスト実行</button>
+    <div class="kv" id="capacity-result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>③ 5000問モックセーブ生成</h2>
+    <button id="btn-mock" type="button">モックセーブ生成(サイズ実測)</button>
+    <div class="kv" id="mock-result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>④ 書き出し3方式(F-6)</h2>
+    <p class="hint">③のモックセーブ(チェックサム付き)を書き出します。3方式すべて試してください。</p>
+    <div class="btn-row">
+      <button id="btn-export-copy" type="button">A: クリップボード</button>
+      <button id="btn-export-share" type="button">B: 共有シート</button>
+      <button id="btn-export-download" type="button">C: ダウンロード</button>
+    </div>
+    <div class="kv" id="export-result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>⑤ 読み込み(ラウンドトリップ確認)</h2>
+    <p class="hint">④で書き出したテキストを貼り付けて「検証」。チェックサムと内容一致を確認します。</p>
+    <textarea id="import-text" rows="4" placeholder="ここにセーブデータを貼り付け"></textarea>
+    <button id="btn-import" type="button">検証</button>
+    <div class="kv" id="import-result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>⑥ ストレージ情報(F-5/F-8)</h2>
+    <button id="btn-storage-info" type="button">情報取得</button>
+    <button id="btn-persist" type="button">persist()を要求</button>
+    <div class="kv" id="storage-result"></div>
+    <p class="hint">プライベートブラウズでも開いて、①のIDや容量テストの挙動の違いを記録してください(F-8)。</p>
+  </section>
+
+  <section class="debug">
+    <div class="debug-head">
+      <h2>ログ</h2>
+      <div>
+        <button id="btn-copy-log" type="button">ログをコピー</button>
+        <button id="btn-toggle-log" type="button">たたむ</button>
+      </div>
+    </div>
+    <div id="log" class="log"><div>起動中...</div></div>
+  </section>
+</main>
+</body>
+</html>
