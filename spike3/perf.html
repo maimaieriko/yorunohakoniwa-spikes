@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ検証">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ヨルノハコニワ Spike 3 - V4 描画性能検証</title>
+<script>window.BUILD_HTML = 's3-001';</script>
+<link rel="stylesheet" href="style.css?v=s3-001">
+<script src="perf.js?v=s3-001" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <h1>ヨルノハコニワ <span class="spike-tag">Spike 3 / V4</span></h1>
+  <p class="sub">描画性能: タイルスクロール + NPC10体 + パーティクル(3分ソーク)</p>
+</header>
+
+<div id="cache-warning" class="cache-warning hidden">⚠️ ビルドID不一致。再読み込みしてください。</div>
+<div class="build-bar">
+  <span>HTML: <b id="build-html">?</b></span>
+  <span>CSS: <b id="build-css">?</b></span>
+  <span>JS: <b id="build-js">?</b></span>
+  <span id="css-build-probe" aria-hidden="true"></span>
+</div>
+
+<main>
+  <canvas id="stage" class="stage"></canvas>
+
+  <div class="hud">
+    <span>FPS: <b id="fps-now">-</b></span>
+    <span>最小: <b id="fps-min">-</b></span>
+    <span>平均: <b id="fps-avg">-</b></span>
+    <span>経過: <b id="elapsed">0:00</b>/3:00</span>
+  </div>
+
+  <div class="btn-row">
+    <button id="btn-start" type="button" class="primary" style="min-width:60%">計測開始(3分)</button>
+    <button id="btn-stop" type="button">停止</button>
+  </div>
+  <label class="slider-row">パーティクル数: <b id="pcount-label">100</b>
+    <input type="range" id="pcount" min="50" max="500" step="50" value="100">
+  </label>
+
+  <section class="debug">
+    <div class="debug-head">
+      <h2>ログ(15秒ごとに自動記録)</h2>
+      <div>
+        <button id="btn-copy-log" type="button">ログをコピー</button>
+        <button id="btn-toggle-log" type="button">たたむ</button>
+      </div>
+    </div>
+    <div id="log" class="log"><div>起動中...</div></div>
+  </section>
+
+  <section class="notes">
+    <h2>確認すること(F-9)</h2>
+    <ol>
+      <li>通常モードで3分間、最小FPSが55以上を維持するか</li>
+      <li>低電力モードON時のFPS上限(30fps制限の有無)</li>
+      <li>3分間で発熱によるFPS低下がないか(15秒ごとのログで確認)</li>
+      <li>不足時はパーティクル数を変えて再計測(判断材料の収集)</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>
