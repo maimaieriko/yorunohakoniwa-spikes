@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ヨルノハコニワ P1-b - ダミー教科(契約回帰用)</title>
+<script>window.BUILD_HTML = 'p1-002'; window.SUBJECT_ID = 'quiz-dummy';</script>
+<link rel="stylesheet" href="style.css?v=p1-002">
+<script src="js/engine/core_data.js?v=p1-002" defer></script>
+<script src="js/engine/input_audio.js?v=p1-002" defer></script>
+<script src="js/engine/world_encounter.js?v=p1-002" defer></script>
+<script src="js/engine/save_core.js?v=p1-002" defer></script>
+<script src="js/subjects/shogi/engine.js?v=p1-002" defer></script>
+<script src="js/subjects/shogi/widget.js?v=p1-002" defer></script>
+<script src="js/subjects/shogi/subject.js?v=p1-002" defer></script>
+<script src="js/boot.js?v=p1-002" defer></script>
+</head>
+<body>
+
+<header class="top">
+  <h1>ヨルノハコニワ <span class="spike-tag">P1-b dummy</span></h1>
+  <p class="sub">SubjectModule契約の分離実証(かずあてクイズ)。コアは本編と同一</p>
+</header>
+
+<div id="cache-warning" class="cache-warning hidden">⚠️ ビルドID不一致。再読み込みしてください。</div>
+<div class="build-bar">
+  <span>HTML: <b id="build-html">?</b></span>
+  <span>CSS: <b id="build-css">?</b></span>
+  <span>JS: <b id="build-js">?</b></span>
+  <span>DATA-CORE: <b id="build-core">?</b></span>
+  <span id="css-build-probe" aria-hidden="true"></span>
+</div>
+
+<main>
+  <div class="hud">
+    <span>かけら: <b id="hud-gold">0</b></span>
+    <span>おさらい(期限/全): <b id="hud-review">0/0</b></span>
+    <span>のこりのヨドミ: <b id="hud-left">-</b></span>
+    <button id="btn-menu" type="button" class="mini">メニュー</button>
+  </div>
+
+  <div class="field-wrap">
+    <canvas id="field" class="stage"></canvas>
+    <div id="enc-overlay" class="enc-overlay hidden"></div>
+    <div id="clear-banner" class="clear-banner hidden">✨ テストマップ クリア! ✨<br><span class="small">P1-a ループ一周(探索→出題→判定→報酬→復習→セーブ)完了</span></div>
+  </div>
+  <p class="hint">操作: ドラッグ / 矢印・WASD / ゲームパッド左スティック(接続時)。ヨドミに触れると将棋の出題。</p>
+
+  <div id="menu-panel" class="panel hidden">
+    <h2>セーブ(スキーマv1・CRC32つき)</h2>
+    <div class="btn-row">
+      <button id="btn-export" type="button">書き出し(コピー)</button>
+      <button id="btn-reset" type="button">はじめから</button>
+    </div>
+    <textarea id="import-text" rows="3" placeholder="書き出したセーブを貼り付け"></textarea>
+    <button id="btn-import" type="button">読み込み</button>
+  </div>
+
+  <section class="debug">
+    <div class="debug-head">
+      <h2>ログ</h2>
+      <div>
+        <button id="btn-copy-log" type="button">ログをコピー</button>
+        <button id="btn-toggle-log" type="button">たたむ</button>
+      </div>
+    </div>
+    <div id="log" class="log"><div>起動中...</div></div>
+  </section>
+</main>
+</body>
+</html>

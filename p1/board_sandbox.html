@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ヨルノハコニワ">
+<title>ヨルノハコニワ P1-b - 盤サンドボックス</title>
+<script>window.BUILD_HTML = 'p1-002';</script>
+<link rel="stylesheet" href="style.css?v=p1-002">
+<script src="js/subjects/shogi/engine.js?v=p1-002" defer></script>
+<script src="js/subjects/shogi/widget.js?v=p1-002" defer></script>
+<script src="js/sandbox.js?v=p1-002" defer></script>
+</head>
+<body>
+<header class="top">
+  <h1>盤サンドボックス <span class="spike-tag">P1-b</span></h1>
+  <p class="sub">盤ウィジェット単体の実機検証(H-2: Spike 1のB項23項目の再実施)</p>
+</header>
+<main>
+  <div class="hud">
+    <span>手番: <b id="sb-turn">☗先手</b></span>
+    <span id="sb-state"></span>
+    <button id="sb-reset" type="button" class="mini">初期配置に戻す</button>
+  </div>
+  <div id="sb-board"></div>
+  <section class="debug">
+    <div class="debug-head">
+      <h2>ログ(着手・反則理由)</h2>
+      <div>
+        <button id="btn-copy-log" type="button">ログをコピー</button>
+      </div>
+    </div>
+    <div id="log" class="log"></div>
+  </section>
+  <section class="notes">
+    <h2>確認項目(H-2〜H-6の実機基準)</h2>
+    <ol>
+      <li>タップ2段で着手/同じ駒で解除/自駒タップで選び直し</li>
+      <li>ドラッグでも着手できる(ゴースト駒が指に追従)</li>
+      <li>持ち駒(取った駒)が駒台に出て、タップ→打てるマスが光る</li>
+      <li>成れる手でダイアログ、歩香桂の強制成りは自動</li>
+      <li>二歩・王手放置などをタップすると理由がログに出て着手されない</li>
+      <li>連打・2本指同時でも固まらない/駒の移動が滑らかに見える</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>
