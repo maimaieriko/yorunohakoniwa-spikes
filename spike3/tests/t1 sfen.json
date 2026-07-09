@@ -1,0 +1,77 @@
+{
+ "suite": "T1 SFEN読み書き",
+ "count": 10,
+ "cases": [
+  {
+   "id": "T1-01",
+   "mode": "roundtrip",
+   "input": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "name": "平手初期局面",
+   "explanation": "最も基本の局面。読み込み→書き出しで完全一致すること。"
+  },
+  {
+   "id": "T1-02",
+   "mode": "roundtrip",
+   "input": "4k4/9/9/9/9/9/9/9/4K4 b G2Pg3p 42",
+   "name": "両者持ち駒+手数",
+   "explanation": "持ち駒(先手G,2P/後手g,3p)と手数42が保持されること。"
+  },
+  {
+   "id": "T1-03",
+   "mode": "roundtrip",
+   "input": "4k4/9/4+P4/9/9/9/4+p4/9/4K4 b - 1",
+   "name": "成駒(と金)",
+   "explanation": "+P/+p(と金)の読み書き。"
+  },
+  {
+   "id": "T1-04",
+   "mode": "roundtrip",
+   "input": "+p+l+n+s1k3/9/+b+r7/9/9/9/+B+R7/9/+P+L+N+S1K3 b - 1",
+   "name": "全成駒種",
+   "explanation": "+P+L+N+S+B+Rの6種すべて(両陣営)の読み書き。"
+  },
+  {
+   "id": "T1-05",
+   "mode": "roundtrip",
+   "input": "4k4/9/9/9/9/9/9/9/4K4 b 2R2B4G4S4N4L18P 1",
+   "name": "持ち駒最大(18Pの2桁枚数)",
+   "explanation": "2桁の枚数表記「18P」を正しく読み書きできること。"
+  },
+  {
+   "id": "T1-06",
+   "mode": "roundtrip",
+   "input": "4k4/9/9/9/9/9/9/9/4K4 w - 123",
+   "name": "後手番+3桁手数",
+   "explanation": "手番w(後手)と手数123の保持。"
+  },
+  {
+   "id": "T1-07",
+   "mode": "roundtrip",
+   "input": "6k2/9/6P2/9/9/9/9/4+B4/4K4 b RG 90",
+   "name": "終盤の疎な局面",
+   "explanation": "駒が少ない実戦終盤型。持ち駒RGの順序も保持。"
+  },
+  {
+   "id": "T1-08",
+   "mode": "normalize",
+   "input": "4k4/9/9/9/9/9/9/9/4K4 b P2G 1",
+   "expectedOutput": "4k4/9/9/9/9/9/9/9/4K4 b 2GP 1",
+   "name": "持ち駒順序の正規化",
+   "explanation": "入力順P2Gを、規定順(R B G S N L P)の2GPに正規化して出力すること。"
+  },
+  {
+   "id": "T1-09",
+   "mode": "reject",
+   "input": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1 b - 1",
+   "name": "不正SFEN: 8段しかない",
+   "explanation": "段数不足は明確なエラーとして拒否すること(黙って壊れた盤を作らない)。"
+  },
+  {
+   "id": "T1-10",
+   "mode": "reject",
+   "input": "lnsgkgsnl/1r5b1/pppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+   "name": "不正SFEN: 3段目が10マス",
+   "explanation": "1段の幅が9を超える入力を拒否すること。"
+  }
+ ]
+}
