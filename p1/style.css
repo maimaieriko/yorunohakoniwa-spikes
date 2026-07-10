@@ -1,7 +1,7 @@
 /* ヨルノハコニワ Spike 2 スタイル(Spike 1の夜テーマを継承した検証UI) */
 
 /* CSSビルドID: デプロイ時に必ず更新(README記載の7箇所と揃える) */
-#css-build-probe::after { content: 'p1-003'; }
+#css-build-probe::after { content: 'p1-004'; }
 #css-build-probe { position: absolute; visibility: hidden; }
 
 :root {
@@ -52,7 +52,7 @@ body {
   background: var(--warn); color: #fff; font-size: 0.8rem; font-weight: 700;
   border-radius: 8px; padding: 8px 12px; text-align: center;
 }
-.hidden { display: none; }
+.hidden { display: none !important; }  /* p1-004: 後続の display:flex 宣言(.sw-promo等)に負けない */
 
 main { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 560px; }
 

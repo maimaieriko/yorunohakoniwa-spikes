@@ -202,6 +202,12 @@
 
     // ---- 入力(Pointer Events一本化・多点無視) ----
     wrap.addEventListener('pointerdown', (e) => {
+      if (opts.debug) {
+        const c0 = e.target.closest('.sw-cell');
+        opts.debug(`pd target=${e.target.tagName}.${(typeof e.target.className === 'string' ? e.target.className : '')}` +
+          ` sq=${c0 ? c0.dataset.f + ',' + c0.dataset.r : 'なし'} locked=${locked}` +
+          ` sel=${sel ? (sel.kind === 'hand' ? '持駒' + sel.letter : sel.f + ',' + sel.r) : 'なし'}`);
+      }
       if (!e.isPrimary || locked) return;
       e.preventDefault();
       const handPc = e.target.closest('.sw-hand-pc');

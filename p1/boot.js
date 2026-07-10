@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const NS = (window.Hakoniwa = window.Hakoniwa || {});
-  NS.BUILD_JS = 'p1-003';
+  NS.BUILD_JS = 'p1-004';
 
   // ---- 画面内ログ ----
   const logEl = document.getElementById('log');
@@ -18,6 +18,7 @@
     logEl.scrollTop = logEl.scrollHeight;
   };
   window.addEventListener('error', (e) => NS.log(`JSエラー: ${e.message} (${e.filename}:${e.lineno})`, 'warn'));
+  window.addEventListener('unhandledrejection', (e) => NS.log(`未処理Promise拒否: ${(e.reason && e.reason.message) || e.reason}`, 'warn'));
 
   // ---- ビルド照合(HTML/CSS/JS/DATA-COREの4値・リトライ方式) ----
   function readCss() {
