@@ -1,5 +1,14 @@
-# ヨルノハコニワ 本実装リポジトリ — P1-b
+# ヨルノハコニワ 本実装リポジトリ — P1-b(平坦配置版 p1-003)
 将棋モジュール接続 + 盤ウィジェット製品化。ダミー教科はdummy.htmlで常設(分離実証)。
+
+## 配置(重要): 全30ファイルをリポジトリ直下に置く(フォルダなし)
+iPhoneのみの運用でフォルダ階層の再構築ミスが起きたため、p1-003から**平坦配置を正式採用**。
+- **実機動作に必要な16ファイル**: index.html / dummy.html / board_sandbox.html / style.css /
+  boot.js / sandbox.js / core_data.js / input_audio.js / world_encounter.js / save_core.js /
+  engine.js / subject.js / widget.js / map_test.json / problems_dummy.json / problems_shogi.json
+- リポジトリ管理用14ファイル(なくても動く): VERSION.txt / run_node.js / build.py /
+  t1〜t8のテスト8件 / README.md / PROJECT.md / DEVELOPMENT_RULES.md
+- **スペース入りの重複ファイル(「core data.js」等)はすべて削除対象**
 
 ## 公開手順
 1. **新規リポジトリ**(推奨名 `yorunohakoniwa`)にこのフォルダ一式をアップロード(ローカルで構成してpush。Web UIでのフォルダ再編禁止=規約§4)
@@ -26,9 +35,14 @@
 ## 開発コマンド
 - 回帰: `node run_node.js`(106件。エンジンに触れたら必須)
 - コア単体テスト: README記載のnodeワンライナー(core_data 8件)
-- **デプロイ前**: `python3 tools/build.py p1-003` 等(ID刻印29箇所+回帰127件ゲート。失敗時は自動ロールバック)
+- **デプロイ前**: `python3 build.py p1-004` 等(ID刻印29箇所+回帰127件ゲート。失敗時は自動ロールバック)
 
 ## Change Log
+### p1-003 (2026-07-10) 平坦配置版
+- 実機報告: iPhoneアップロードでフォルダ構造が平坦化され、js/配下が404→盤が空(診断版で確定)
+- 全ファイルをリポジトリ直下に置く**平坦配置を正式採用**。HTML参照・JSON読込(直下優先)・
+  run_node.js・build.pyを直下用に変更。機能・テスト・ファイル名(アンダースコア)は無変更
+- Node 127/127維持。刻印29箇所
 ### p1-002 (2026-07-09) P1-b
 - 将棋SubjectModule(subject.js): judge層DOM非依存(match/mate)・USI→日本語表記・反則→ギョクのセリフ7種
 - 盤ウィジェット(widget.js): 9×9+駒台、タップ2段+ドラッグ、**真の合法手ハイライト(反則手は選べない)**、成り選択ダイアログ(強制成り自動)、120ms移動アニメ+入力ロック、B案サイズ既定

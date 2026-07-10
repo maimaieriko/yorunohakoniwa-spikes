@@ -41,7 +41,7 @@
 
 ## 6. リポジトリ・環境
 - 検証(凍結): GitHub Pages `https://maimaieriko.github.io/<spikesリポジトリ>/spike1〜3/`
-- 本実装: 新規リポジトリ(推奨名 `yorunohakoniwa`)※Phase 1-a承認時に確定
+- 本実装: リポジトリ直下の**平坦配置**(p1-003で正式採用。iPhone運用でのフォルダ階層事故対策)。全参照は直下名
 - 実機: iPhone(iOS 18.7 / Safari 26.5)を主端末に検証済み。下限想定: iOS 16 / iPhone SE2 / iPad 第9世代
 - 開発検証: Node(run_node.js で106件)
 

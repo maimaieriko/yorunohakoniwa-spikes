@@ -10,7 +10,7 @@
   else root.HakoniwaData = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  const BUILD = 'p1-002';
+  const BUILD = 'p1-003';
 
   // ---------- CRC32 ----------
   const CRC_TABLE = (() => {

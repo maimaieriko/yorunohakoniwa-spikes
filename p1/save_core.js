@@ -61,7 +61,7 @@
     async function fetchJson(fname) {
       // 規約: tests/系と同じ2段フォールバック+絶対URLログ(データはdata/配下)
       const tried = [];
-      for (const rel of [`data/${fname}`, fname]) {
+      for (const rel of [fname, `data/${fname}`]) {   // 平坦配置(p1-003): 直下を優先
         const url = new URL(`${rel}?v=${NS.BUILD_JS}`, location.href).href;
         tried.push(url);
         try {

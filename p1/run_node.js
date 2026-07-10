@@ -3,9 +3,9 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const E = require('./js/subjects/shogi/engine.js');
+const E = require('./engine.js');
 
-const DIR = path.join(__dirname, 'tests');
+const DIR = __dirname;
 const load = (f) => JSON.parse(fs.readFileSync(path.join(DIR, f), 'utf8'));
 let pass = 0, fail = 0;
 const failures = [];
@@ -116,7 +116,7 @@ console.log(`  findAllMateMoves(3) 時間: 最大${Math.max(...t7Ms)}ms / 平均
 // ---- T8: 将棋SubjectModule判定層 ----
 console.log('=== T8 SubjectModule判定層 ===');
 {
-  const S = require('./js/subjects/shogi/subject.js');
+  const S = require('./subject.js');
   const t8 = load('t8_subject.json');
   for (const c of t8.judgeCases) {
     const r = S.judge({ payload: Object.assign({ sfen: c.sfen }, c.payload) }, c.answer);
@@ -132,7 +132,7 @@ console.log('=== T8 SubjectModule判定層 ===');
   }
   // 収録6問の機械検証(規約§2)
   const pv = t8.problemSetValidation;
-  const pset = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', pv.file), 'utf8'));
+  const pset = JSON.parse(fs.readFileSync(path.join(__dirname, pv.file), 'utf8'));
   for (const p of pset.problems) {
     const pos = E.parseSfen(p.payload.sfen);
     if (p.payload.judge === 'mate') {

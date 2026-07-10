@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const NS = (window.Hakoniwa = window.Hakoniwa || {});
-  NS.BUILD_JS = 'p1-002';
+  NS.BUILD_JS = 'p1-003';
 
   // ---- 画面内ログ ----
   const logEl = document.getElementById('log');
