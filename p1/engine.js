@@ -434,7 +434,7 @@
   }
 
   return {
-    BUILD: 'p1-004',
+    BUILD: 'p1-005',
     REASON, parseSfen, toSfen, parseMove, moveToUsi,
     generateLegalMoves, validateMove, applyMove, inCheck, isAttacked,
     perft, findAllMates, kingSquare,

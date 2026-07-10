@@ -126,6 +126,7 @@
     // ---- 成り選択 ----
     function askPromotion(mvPlain, mvPromo) {
       return new Promise((resolve) => {
+        if (opts.debug) opts.debug(`成り選択 表示 pending保持: 成=${E.moveToUsi(mvPromo)} / 不成=${E.moveToUsi(mvPlain)}`);
         promo.innerHTML = '';
         promo.classList.remove('hidden');
         const p = pos.board[(mvPlain.from.r - 1) * 9 + (mvPlain.from.f - 1)];
@@ -133,8 +134,20 @@
         const row = el('div', 'sw-promo-row');
         const b1 = el('button', 'sw-promo-btn', `${KANJI_P[p.letter]} なる`);
         const b2 = el('button', 'sw-promo-btn sub', `${KANJI[p.letter]} ならない`);
-        b1.addEventListener('click', () => { promo.classList.add('hidden'); resolve(mvPromo); });
-        b2.addEventListener('click', () => { promo.classList.add('hidden'); resolve(mvPlain); });
+        // iOS Safari対策: clickを待たずpointerupで確定(clickはフォールバック)。二重発火はdoneで防ぐ
+        let done = false;
+        const choose = (mv, label) => (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (done) return;
+          done = true;
+          if (opts.debug) opts.debug(`成り選択 確定: ${label} promote=${mv.promote} usi=${E.moveToUsi(mv)}`);
+          promo.classList.add('hidden');
+          resolve(mv);
+        };
+        const h1 = choose(mvPromo, 'なる'), h2 = choose(mvPlain, 'ならない');
+        b1.addEventListener('pointerup', h1); b1.addEventListener('click', h1);
+        b2.addEventListener('pointerup', h2); b2.addEventListener('click', h2);
         row.append(b1, b2);
         promo.appendChild(row);
       });
@@ -208,6 +221,7 @@
           ` sq=${c0 ? c0.dataset.f + ',' + c0.dataset.r : 'なし'} locked=${locked}` +
           ` sel=${sel ? (sel.kind === 'hand' ? '持駒' + sel.letter : sel.f + ',' + sel.r) : 'なし'}`);
       }
+      if (e.target.closest('.sw-promo')) return; // p1-005: ダイアログ内は委譲処理もpreventDefaultもしない
       if (!e.isPrimary || locked) return;
       e.preventDefault();
       const handPc = e.target.closest('.sw-hand-pc');

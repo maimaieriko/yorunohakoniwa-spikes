@@ -26,13 +26,23 @@ def main():
     cur = open(vfile).read().strip()
     if cur == new:
         print(f'既に {new} です'); sys.exit(2)
+    # 第1段: 全ファイルを書き込まずに検証(1つでも不一致なら何も変更しない)
     backup = {}
+    errors = []
     for f, want in SPOTS.items():
         p = os.path.join(ROOT, f)
         t = open(p, encoding='utf-8').read()
         n = t.count(cur)
-        assert n == want, f'{f}: {cur}が{n}箇所(期待{want})。SPOTS表を更新してください'
+        if n != want:
+            errors.append(f'{f}: {cur}が{n}箇所(期待{want})')
         backup[p] = t
+    if errors:
+        print('!!! 刻印前検証で不一致(ファイルは未変更):')
+        for e in errors: print('   ' + e)
+        print('SPOTS表の更新、またはコメント等への版番号混入を確認してください')
+        sys.exit(1)
+    # 第2段: 検証合格後に一括書き込み
+    for p, t in backup.items():
         open(p, 'w', encoding='utf-8').write(t.replace(cur, new))
     print(f'刻印 {cur} → {new} ({sum(SPOTS.values())}箇所)')
     r = subprocess.run(['node', os.path.join(ROOT, 'run_node.js')], capture_output=True, text=True)
