@@ -139,6 +139,8 @@
           onAnswer(answer) {
             if (locked) return;
             const r = subject.judge(problem, answer);
+            // p1-006: 判定ログ(問題ID / 実着手USI / 判定内訳 / 結果)
+            if (window.Hakoniwa.log) window.Hakoniwa.log(`判定 ${problem.id}: 着手=${answer} ${r.detail || ''} → ${r.correct ? '正解' : '不正解'}`, r.correct ? 'ok' : 'warn');
             if (r.correct) {
               locked = true;
               window.Hakoniwa.Audio.seCorrect();

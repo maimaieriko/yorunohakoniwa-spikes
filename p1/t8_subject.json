@@ -1,7 +1,7 @@
 {
  "suite": "T8 将棋SubjectModule判定層",
- "count": 21,
- "note": "judge層(DOM非依存)の単体テスト+収録6問の機械検証。テストファースト: subject.js実装前に作成。",
+ "count": 23,
+ "note": "judge層(DOM非依存)の単体テスト+収録6問の機械検証。テストファースト: subject.js実装前に作成。 p1-006: 持ち駒打ちのT8-17/18と、次の一手の意味的アサーション(semanticAsserts)を追加。 p1-007: boardRefs照合・本文マス言及スキャン・semanticAsserts全match適用を収録検証に追加。",
  "judgeCases": [
   {
    "id": "T8-01",
@@ -170,6 +170,39 @@
    "expect": {
     "correct": false
    }
+  },
+  {
+   "id": "T8-17",
+   "name": "match: 持ち駒打ちの正解(N*4c・王手飛車)",
+   "sfen": "4k1r2/9/9/9/9/9/9/9/K8 b N 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "N*4c"
+    ],
+    "wrongMoves": []
+   },
+   "answer": "N*4c",
+   "expect": {
+    "correct": true
+   }
+  },
+  {
+   "id": "T8-18",
+   "name": "match: 持ち駒打ちの誤答(N*3g・実機報告の再現)",
+   "sfen": "4k1r2/9/9/9/9/9/9/9/K8 b N 1",
+   "payload": {
+    "judge": "match",
+    "correctMoves": [
+     "N*4c"
+    ],
+    "wrongMoves": []
+   },
+   "answer": "N*3g",
+   "expect": {
+    "correct": false,
+    "noMessage": true
+   }
   }
  ],
  "answerTextCases": [
@@ -209,6 +242,30 @@
     "5c5b+"
    ]
   },
-  "note": "mate問題=期待詰み手と完全一致 / match問題=correctMoves・wrongMoves全手の合法性。6問=6件としてカウント"
+  "note": "mate問題=期待詰み手と完全一致 / match問題=correctMoves・wrongMoves全手の合法性。6問=6件としてカウント",
+  "semanticAsserts": {
+   "S-NEXT-001": {
+    "move": "2h2d",
+    "captures": true,
+    "captureIsSafe": true,
+    "note": "ただ取り: 駒を取り、取った駒が敵の利きに入らない"
+   },
+   "S-NEXT-002": {
+    "move": "N*4c",
+    "givesCheck": true,
+    "attacks": "3a",
+    "note": "王手飛車: 王手であり、かつ飛車のマスに利く"
+   },
+   "S-JOSEKI-001": {
+    "move": "7g7f",
+    "opens": "8h",
+    "note": "角道を開ける: 着手後に8八の角の可動域が増える"
+   },
+   "S-JOSEKI-002": {
+    "move": "2g2f",
+    "pawnPushOnRookFile": true,
+    "note": "飛車先の歩: 自飛車と同じ筋の歩を1つ前進"
+   }
+  }
  }
 }

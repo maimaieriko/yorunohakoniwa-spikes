@@ -38,12 +38,13 @@
     const p = problem.payload;
     if (p.judge === 'mate') {
       const pos = E.parseSfen(p.sfen);
-      return { correct: E.isCorrectMateMove(pos, usi, p.mateN) };
+      return { correct: E.isCorrectMateMove(pos, usi, p.mateN), detail: `mate判定(n=${p.mateN})` };
     }
     // match方式(次の一手・定跡)
-    if ((p.correctMoves || []).includes(usi)) return { correct: true };
+    const detail = `correctMoves=[${(p.correctMoves || []).join(',')}]`;
+    if ((p.correctMoves || []).includes(usi)) return { correct: true, detail };
     const w = (p.wrongMoves || []).find((x) => x.move === usi);
-    return { correct: false, message: w ? w.message : null };
+    return { correct: false, message: w ? w.message : null, detail };
   }
 
   // USI → 子ども向け日本語表記(例: 7六歩 / 4三桂打 / 5二歩成 / 2四飛)

@@ -132,9 +132,43 @@ console.log('=== T8 SubjectModule判定層 ===');
   }
   // 収録6問の機械検証(規約§2)
   const pv = t8.problemSetValidation;
+  const RANKS_ = 'abcdefghi';
   const pset = JSON.parse(fs.readFileSync(path.join(__dirname, pv.file), 'utf8'));
+  const NUMK = '一二三四五六七八九';
+  function sqOf(s) { return { f: Number(s[0]), r: 'abcdefghi'.indexOf(s[1]) + 1 }; }
+  function pieceAt(pos, sq) { const q = sqOf(sq); return pos.board[(q.r - 1) * 9 + (q.f - 1)]; }
   for (const p of pset.problems) {
     const pos = E.parseSfen(p.payload.sfen);
+    // (A) boardRefs照合: 解説が前提とする配置がSFENと一致するか(SFEN誤記の検出)
+    {
+      const bad = [];
+      for (const ref of p.boardRefs || []) {
+        const pc = pieceAt(pos, ref.sq);
+        const side = ref.pc === ref.pc.toUpperCase() ? 's' : 'g';
+        if (!pc || pc.side !== side || pc.letter !== ref.pc.toUpperCase()) {
+          bad.push(`${ref.sq}に${ref.pc}が無い(実際: ${pc ? (pc.side === 's' ? pc.letter : pc.letter.toLowerCase()) : '空'})`);
+        }
+      }
+      check(`${pv.id}:${p.id}:refs`, '収録検証(boardRefs=解説前提の配置)', bad.length === 0, bad.join(' / '));
+    }
+    // (B) 本文マス言及スキャン: 「3一」等の言及が 占有/正解手のfrom・to/正解後の利き のいずれかと整合するか
+    {
+      const text = [p.questionText, p.hint1, p.hint2, p.explanation].join(' ');
+      const mentions = [...new Set([...text.matchAll(/([1-9])([一二三四五六七八九])/g)].map((m) => m[1] + 'abcdefghi'[NUMK.indexOf(m[2])]))];
+      const correct = p.payload.judge === 'mate' ? E.findAllMateMoves(pos, p.payload.mateN) : p.payload.correctMoves;
+      const bad = [];
+      for (const sq of mentions) {
+        let ok = !!pieceAt(pos, sq);
+        for (const cm of correct) {
+          const mv = E.parseMove(cm);
+          if (!ok && mv.to.f === sqOf(sq).f && mv.to.r === sqOf(sq).r) ok = true;
+          if (!ok && mv.from && mv.from.f === sqOf(sq).f && mv.from.r === sqOf(sq).r) ok = true;
+          if (!ok) { const np = E.applyMove(pos, mv); if (E.isAttacked(np, sqOf(sq).f, sqOf(sq).r, pos.turn)) ok = true; }
+        }
+        if (!ok) bad.push(sq);
+      }
+      check(`${pv.id}:${p.id}:text`, `収録検証(本文マス言及${mentions.length}件の整合)`, bad.length === 0, bad.length ? `不整合: ${bad.join(',')}` : '');
+    }
     if (p.payload.judge === 'mate') {
       const mates = E.findAllMateMoves(pos, p.payload.mateN);
       const want = pv.expectedMates[p.id] || [];
@@ -145,6 +179,39 @@ console.log('=== T8 SubjectModule判定層 ===');
       for (const m of p.payload.correctMoves) if (!E.validateMove(pos, m).legal) bad.push(m);
       for (const w of p.payload.wrongMoves || []) if (!E.validateMove(pos, w.move).legal) bad.push(w.move);
       check(`${pv.id}:${p.id}`, '収録検証(手の合法性)', bad.length === 0, bad.length ? `非合法: ${bad.join(',')}` : '');
+      const sa = (pv.semanticAsserts || {})[p.id];
+      if (sa) { // 意味的アサーション: 正解手が出題意図(王手・対象マスへの利き)を満たすか
+        const np = E.applyMove(pos, E.parseMove(sa.move));
+        let ok = true, why = [];
+        if (sa.givesCheck && !E.inCheck(np, np.turn)) { ok = false; why.push('王手でない'); }
+        if (sa.attacks) {
+          const f = Number(sa.attacks[0]), r = RANKS_.indexOf(sa.attacks[1]) + 1;
+          if (!E.isAttacked(np, f, r, pos.turn)) { ok = false; why.push(sa.attacks + 'に利きなし'); }
+        }
+        if (sa.captures) {
+          const mv0 = E.parseMove(sa.move);
+          if (!pieceAt(pos, sa.move.slice(2, 4))) { ok = false; why.push('取る駒がない'); }
+          if (sa.captureIsSafe && E.isAttacked(np, mv0.to.f, mv0.to.r, np.turn)) { ok = false; why.push('取り返される(タダでない)'); }
+        }
+        if (sa.opens) {
+          const q = sqOf(sa.opens);
+          const before = E.reachableSquares(pos, q.f, q.r).length;
+          const after = E.reachableSquares(np, q.f, q.r).length; // reachableSquaresは駒自身の側で計算するため手番非依存
+
+          if (!(after > before)) { ok = false; why.push(`${sa.opens}の可動域が増えない(${before}→${after})`); }
+        }
+        if (sa.pawnPushOnRookFile) {
+          const mv0 = E.parseMove(sa.move);
+          const moved = pieceAt(pos, sa.move.slice(0, 2));
+          let hasRook = false;
+          for (let r2 = 1; r2 <= 9; r2++) {
+            const q = pos.board[(r2 - 1) * 9 + (mv0.to.f - 1)];
+            if (q && q.side === pos.turn && q.letter === 'R') hasRook = true;
+          }
+          if (!(moved && moved.letter === 'P' && hasRook)) { ok = false; why.push('自飛車の筋の歩の前進でない'); }
+        }
+        check(`${pv.id}:${p.id}:sem`, '収録検証(意味: ' + (sa.note || '') + ')', ok, why.join('/'));
+      }
     }
   }
 }
